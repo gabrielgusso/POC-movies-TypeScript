@@ -1,7 +1,7 @@
 import { nameSchema } from "../schemas/movie.schema.js"
 import { Request, Response, NextFunction } from "express"
 import { Platform } from "../protocols/protocols.js"
-import { connection } from "../config/database.js"
+import { verifyIfExistPlatform } from "../repositories/platform.repository.js"
 
 export async function platformMiddleware(
   req: Request,
@@ -17,13 +17,8 @@ export async function platformMiddleware(
   }
 
   try {
-    const verifyIfExist = await connection.query(
-      `
-        SELECT FROM platform WHERE name=$1
-        `,
-      [platform.name]
-    )
-    if (verifyIfExist.rows[0]) {
+    const verify = await verifyIfExistPlatform(platform)
+    if (verify.rows[0]) {
       return res.status(409).send("This platform is already registered")
     }
 

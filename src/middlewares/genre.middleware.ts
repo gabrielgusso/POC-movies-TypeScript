@@ -1,7 +1,7 @@
 import { nameSchema } from "../schemas/movie.schema.js"
 import { Request, Response, NextFunction } from "express"
 import { Genre } from "../protocols/protocols.js"
-import { connection } from "../config/database.js"
+import { verifyIfExistGenre } from "../repositories/genre.repository.js"
 
 export async function genreMiddleware(
   req: Request,
@@ -17,13 +17,8 @@ export async function genreMiddleware(
   }
 
   try {
-    const verifyIfExist = await connection.query(
-      `
-        SELECT FROM genre WHERE name=$1
-        `,
-      [genre.name]
-    )
-    if (verifyIfExist.rows[0]) {
+    const verify = await verifyIfExistGenre(genre)
+    if (verify.rows[0]) {
       return res.status(409).send("This genre is already registered")
     }
 

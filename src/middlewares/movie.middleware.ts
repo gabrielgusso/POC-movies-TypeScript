@@ -1,7 +1,8 @@
 import { movieSchema } from "../schemas/movie.schema.js"
 import { Request, Response, NextFunction } from "express"
 import { Movie } from "../protocols/protocols.js"
-import { connection } from "../config/database.js"
+import { verifyIfExistPlatformId } from "../repositories/platform.repository.js"
+import { verifyIfExistGenremId } from "../repositories/genre.repository.js"
 
 export async function movieMiddleware(
   req: Request,
@@ -17,22 +18,12 @@ export async function movieMiddleware(
   }
 
   try {
-    const verifyIfExistPlatform = await connection.query(
-      `
-        SELECT FROM platform WHERE id=$1
-        `,
-      [movie.platformId]
-    )
+    const verifyIfExistPlatform = await verifyIfExistPlatformId(movie)
     if (!verifyIfExistPlatform.rows[0]) {
       return res.status(404).send("Platform not found")
     }
 
-    const verifyIfExistGenre = await connection.query(
-      `
-        SELECT FROM genre WHERE id=$1
-        `,
-      [movie.genreId]
-    )
+    const verifyIfExistGenre = await verifyIfExistGenremId(movie)
     if (!verifyIfExistGenre.rows[0]) {
       return res.status(404).send("Genre not found")
     }
