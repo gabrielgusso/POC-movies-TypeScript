@@ -1,13 +1,11 @@
 import { Response, Request } from "express"
-import { connection } from "../config/database.js"
 import { Genre } from "../protocols/protocols.js"
+import { listGenres, insertGenre } from "../repositories/genre.repository.js"
 
 export async function genreGetController(req: Request, res: Response) {
   try {
-    const { rows } = await connection.query(`
-        SELECT * FROM genre`)
-
-    return res.status(200).send(rows)
+    const result = await listGenres()
+    return res.status(200).send(result.rows)
   } catch (error) {
     res.status(500).send(error)
   }
@@ -17,14 +15,8 @@ export async function genrePostController(req: Request, res: Response) {
   const genre = req.body as Genre
 
   try {
-    await connection.query(
-      `
-    INSERT INTO genre (name) VALUES ($1)
-    `,
-      [genre.name]
-    )
-
-    res.sendStatus(201)
+    const result = await insertGenre(genre)
+    res.status(201).send(`genre inserted ${result.rowCount}`)
   } catch (error) {
     res.status(500).send(error)
   }

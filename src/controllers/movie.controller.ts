@@ -1,5 +1,4 @@
 import { Response, Request } from "express"
-import { connection } from "../config/database.js"
 import { Movie } from "../protocols/protocols.js"
 import {
   listAllMovies,
@@ -80,7 +79,7 @@ export async function movieDeleteController(req: Request, res: Response) {
     }
 
     await deleteMovie(id)
-    
+
     res.sendStatus(200)
   } catch (error) {
     res.status(500).send(error)
