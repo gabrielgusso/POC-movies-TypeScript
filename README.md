@@ -79,6 +79,10 @@ npm start
     "name": "Mistério"
   }, ...]
 
+  /total-movies - Returns : {
+  "totalMovies": "14"
+}
+
 ### PATCH: 
 /movie/:id - Toggle the watchedStatus to true/false
 
